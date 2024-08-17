@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Name Selector</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 9em;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        select, button {
+            font-size: 5em;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 12em;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Select a Class</h1>
+    <form id="classForm">
+        <select name="class_name" id="classSelect">
+            {% for class_name in classes %}
+            <option value="{{ class_name }}">{{ class_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Get Random Name</button>
+    </form>
+
+    <div id="result">
+        <p id="randomName"></p>
+    </div>
+
+    <script>
+        document.getElementById('classForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const className = document.getElementById('classSelect').value;
+            fetch('/get_random_name', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'class_name=' + encodeURIComponent(className)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.name) {
+                    document.getElementById('randomName').textContent = data.name;
+                } else {
+                    document.getElementById('randomName').textContent = 'Error: ' + data.error;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
